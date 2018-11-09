@@ -31,14 +31,14 @@ class ScssAsset {
      * last build.
      */
     function build() {
-        $checker = new ChangeChecker($this->target);
-        $sources = expand_globs($this->globSources);
-        $changedDependencies = $checker->getChanged($this->meta->getDependencies());
+        $checker      = new ChangeChecker($this->target);
+        $sources      = expand_globs($this->globSources);
+        $dependencies = $this->meta->getDependencies();
 
-        if (!$checker->areChanged($sources) && !$changedDependencies)
+        if (!$checker->areChanged($sources) && !$checker->areChanged($dependencies))
             return; // nothing to build
 
-        $this->doBuild($sources, $changedDependencies);
+        $this->doBuild($sources);
     }
 
     /**
@@ -53,7 +53,7 @@ class ScssAsset {
     // private //
     /////////////
 
-    private function doBuild($sources, $changedDependencies) {
+    private function doBuild($sources) {
         $scssString  = '';
         $importPaths = []; // this is for @import directives
         foreach ($sources as $source) {
@@ -66,6 +66,7 @@ class ScssAsset {
         $scss->setImportPaths(array_keys($importPaths));
         $scss->registerFunction('asset-url', function($args)use(&$dependencies) { // this is for static assets
             $arg = $args[0][2][0];
+            // TODO asset-url should be assumed relative to current file
             $dependencies[] = $arg;
             return $this->refreshDependency($arg);
         });

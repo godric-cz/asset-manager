@@ -24,17 +24,6 @@ class ChangeChecker {
         return false;
     }
 
-    /**
-     * @param string[] $files files to check
-     * @return string[] files changed since last target build
-     */
-    function getChanged($files) {
-        $targetModified = $this->getTargetModificationTime();
-        return array_filter($files, function($f)use($targetModified) {
-            return filemtime($f) > $targetModified;
-        });
-    }
-
     /////////////
     // private //
     /////////////
