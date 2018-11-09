@@ -54,23 +54,37 @@ class ScssAsset {
     /////////////
 
     private function doBuild($sources) {
+        // collect scss string
+        // file-aware function (includes, asset urls) must be prepared here
         $scssString  = '';
         $importPaths = []; // this is for @import directives
         foreach ($sources as $source) {
-            $scssString .= file_get_contents($source);
-            $importPaths[dirname($source)] = true;
+            $sourceDir = dirname($source);
+            $sourceContents = file_get_contents($source);
+
+            // convert asset-urls to relative to current file
+            // TODO this is dummy solution
+            $sourceContents = strtr($sourceContents, ["asset-url('" => "asset-url('$sourceDir/"]);
+
+            $scssString .= $sourceContents;
+
+            // TODO instead of import paths, use similar approach as with
+            // assets and use then all imports as dependencies to allow auto
+            // recompilation even for imported files
+            $importPaths[$sourceDir] = true;
         }
 
+        // configure compiler, bind custom functions (macros)
         $dependencies = [];
         $scss = new ScssCompiler;
         $scss->setImportPaths(array_keys($importPaths));
         $scss->registerFunction('asset-url', function($args)use(&$dependencies) { // this is for static assets
             $arg = $args[0][2][0];
-            // TODO asset-url should be assumed relative to current file
             $dependencies[] = $arg;
-            return $this->refreshDependency($arg);
+            return 'url(\'' . $this->refreshDependency($arg) . '\')';
         });
 
+        // run compiler
         $cssString = $scss->compile($scssString); // TODO compilation density and sourcemaps
         $this->meta->setDependencies($dependencies);
         file_put_contents($this->target, $cssString); // TODO Exception
