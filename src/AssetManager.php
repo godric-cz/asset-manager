@@ -15,6 +15,7 @@ class AssetManager {
 
     private
         $builtCssUrls = [],
+        $config,
         $dir,
         $url;
 
@@ -30,6 +31,7 @@ class AssetManager {
     function addScss($globExpressions) {
         $asset = new ScssAsset($globExpressions, $this->dir);
 
+        $this->config->checkAllowedBuild('scss', $globExpressions); // TODO what if config is not set?
         $asset->build(); // TODO do not do this on production
 
         $target  = $asset->getTarget();
@@ -43,6 +45,10 @@ class AssetManager {
             return '<link rel="stylesheet" type="text/css" href="' . $url . '" media="screen,projection">';
         }, $this->builtCssUrls);
         return implode("\n", $tags);
+    }
+
+    function setConfig($jsonFile) {
+        $this->config = new Config($jsonFile);
     }
 
 }
@@ -78,6 +84,25 @@ function expand_globs($globs) {
         }
     }
     return $files;
+}
+
+/**
+ * Function for resolving /./ and /../ in paths without need to access the filesystem.
+ */
+function naive_realpath($path) {
+    // regex for "/something/.."
+    static $regex = '/[^/]+/\.\.';
+
+    if ($path[0] != '/') {
+        // TODO check getcwd performance
+        $path = getcwd() . '/' . $path;
+    }
+
+    do {
+        $path = preg_replace("#$regex#", '', $path, 1, $numChanges);
+    } while($numChanges > 0);
+
+    return $path;
 }
 
 /**
