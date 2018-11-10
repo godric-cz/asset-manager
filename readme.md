@@ -51,3 +51,7 @@ $am->addScss(['style/style.scss', 'style/components/*.scss']);
     - if she creates file unreadable for others, it still may be a problem (it will be unreadable for apache)
 - [ ] allow both (one) string and array of strings as arguments to add* methods
 - [ ] document `assets.json` config file
+- [ ] files may theoretically change even without timestamp change
+    - this can be true especially for images when you remove old image and copy&rename new version, which will keep modification time of copied file
+    - possible combination of filemtime an size in bytes could help, see https://secure.php.net/manual/en/function.stat.php
+    - in case of using `stat()` do not use it for all files but only pick ones where it makes sense

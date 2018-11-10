@@ -122,7 +122,7 @@ class ScssAsset {
         $targetUrl  = $targetName . '?v=' . $modified;
         $targetFile = $this->dir . '/' . $targetName;
 
-        if (!is_file($targetFile)) {
+        if (!is_file($targetFile) || filemtime($targetFile) < $modified) {
             @unlink($targetFile);
             copy($file, $targetFile);
             // TODO Exception
