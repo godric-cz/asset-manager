@@ -14,6 +14,7 @@ class ScssAsset {
 
     /**
      * @param string[] $globSources expressions for glob defining all sources
+     *  (must be absolute paths)
      * @param string $targetDirectory where to place all built files
      */
     function __construct($globSources, $targetDirectory) {
@@ -99,7 +100,7 @@ class ScssAsset {
 
         // run compiler
         $cssString = $scss->compile($scssString);       // TODO compilation density and sourcemaps
-        $this->meta->setDependencies($dependencies);    // TODO FIXME dependencies are relative, so this is probably broken
+        $this->meta->setDependencies($dependencies);
         file_put_contents($this->target, $cssString);   // TODO Exception
                                                         // TODO file permissions
     }
