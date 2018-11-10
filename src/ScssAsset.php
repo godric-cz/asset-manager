@@ -8,7 +8,9 @@ class ScssAsset {
 
     private
         $dir,
-        $globSources;
+        $globSources,
+        $meta,
+        $target;
 
     /**
      * @param string[] $globSources expressions for glob defining all sources
@@ -38,15 +40,26 @@ class ScssAsset {
         if (!$checker->areChanged($sources) && !$checker->areChanged($dependencies))
             return; // nothing to build
 
+        // TODO usecase: scss depends on picture, picture gets removed => error should be triggered
+
         $this->doBuild($sources);
     }
 
     /**
-     * @return string filename (without path) of target css file. File is not
-     *  guaranteed to exist at this point. You must build it first.
+     * @return string html tag to built asset
      */
-    function getTarget() {
-        return $this->target;
+    function getTag($baseUrl) {
+        $target  = $this->target;
+        $version = filemtime($target);
+
+        if ($version === false)
+            throw new \Exception('Asset must be built first.');
+
+        $url = $baseUrl . '/' . basename($target) . '?v=' . $version;
+
+        // TODO is media attribute necessary?
+        // TODO it's not clear, if url and tag creation should be implemented in this class
+        return '<link rel="stylesheet" type="text/css" href="' . $url . '" media="screen,projection">';
     }
 
     /////////////
@@ -85,9 +98,10 @@ class ScssAsset {
         });
 
         // run compiler
-        $cssString = $scss->compile($scssString); // TODO compilation density and sourcemaps
-        $this->meta->setDependencies($dependencies);
-        file_put_contents($this->target, $cssString); // TODO Exception
+        $cssString = $scss->compile($scssString);       // TODO compilation density and sourcemaps
+        $this->meta->setDependencies($dependencies);    // TODO FIXME dependencies are relative, so this is probably broken
+        file_put_contents($this->target, $cssString);   // TODO Exception
+                                                        // TODO file permissions
     }
 
     /**

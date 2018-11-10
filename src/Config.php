@@ -17,13 +17,9 @@ class Config {
         // TODO possible shared abstraction with ScssMeta
     }
 
-    function checkAllowedBuild($type, $globExpressions) {
-        $requestedBuilds = array_map(function($f) {
-            return naive_realpath($f);
-        }, $globExpressions);
-
+    function checkAllowedBuild($type, $canonizedGlobExpressions) {
         $isAllowed = in_array(
-            [$type, $requestedBuilds],
+            [$type, $canonizedGlobExpressions],
             $this->getAllowedBuilds()
         );
 
