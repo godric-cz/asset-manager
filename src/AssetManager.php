@@ -4,12 +4,6 @@ namespace Godric\AssetManager;
 
 require __DIR__ . '/_functions.php';
 
-// TODO temporary autoloader
-spl_autoload_register(function($class) {
-    $realClass = strtr($class, ['Godric\\AssetManager\\' => '']);
-    @include __DIR__ . '/' . $realClass . '.php';
-});
-
 /**
  * Temporary dummy implementation of asset manager.
  */

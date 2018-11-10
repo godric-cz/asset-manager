@@ -1,0 +1,10 @@
+{
+    "name": "godric/asset-manager",
+    "description": "Static asset management with no need for commandline.",
+    "autoload": {
+        "psr-4": { "Godric\\AssetManager\\": "src/" }
+    },
+    "require": {
+        "leafo/scssphp": "^0.7.7"
+    }
+}
