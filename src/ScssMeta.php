@@ -29,6 +29,7 @@ class ScssMeta {
             JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
         );
 
+        @unlink($this->file);
         file_put_contents($this->file, $jsonString);
     }
 

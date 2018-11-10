@@ -101,8 +101,8 @@ class ScssAsset {
         // run compiler
         $cssString = $scss->compile($scssString);       // TODO compilation density and sourcemaps
         $this->meta->setDependencies($dependencies);
+        @unlink($this->target);
         file_put_contents($this->target, $cssString);   // TODO Exception
-                                                        // TODO file permissions
     }
 
     /**
@@ -123,6 +123,7 @@ class ScssAsset {
         $targetFile = $this->dir . '/' . $targetName;
 
         if (!is_file($targetFile)) {
+            @unlink($targetFile);
             copy($file, $targetFile);
             // TODO Exception
         }

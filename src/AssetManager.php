@@ -35,6 +35,19 @@ class AssetManager {
     }
 
     /**
+     * Cleans build directory and builds all assets.
+     */
+    function buildClean() {
+        $this->clean();
+
+        foreach ($this->config->getAllowedBuilds() as [$type, $canonizedGlobExpressions]) {
+            // TODO use $type to select Asset class, see addAsset
+            $asset = new ScssAsset($canonizedGlobExpressions, $this->dir);
+            $asset->build();
+        }
+    }
+
+    /**
      * @return string html tags for html header -- TODO elaborate on description
      */
     function getTags() {
@@ -73,6 +86,20 @@ class AssetManager {
             $asset->build();
 
         $this->tags .= $asset->getTag($this->url) . "\n";
+    }
+
+    /**
+     * Deletes all files from $this->dir.
+     */
+    private function clean() {
+        foreach (glob($this->dir . '/*') as $file) {
+            $name = basename($file);
+            if (!preg_match('/^\d{10}/', $name))
+                throw new \Exception('Unexpected filename. Make sure "' . $this->dir . '" contains only build artefacts (and is thus safe to clean) and try again.');
+            $deleted = unlink($file);
+            if (!$deleted)
+                throw new \Exception('Failed to delete "' . $file . '". Make sure target directory is writable to allow delete of other users files.');
+        }
     }
 
 }

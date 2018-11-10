@@ -43,3 +43,9 @@ $am->addScss(['style/style.scss', 'style/components/*.scss']);
 
 ... = $am->getTags(); // only urls of added are generated, no build
 ```
+
+## TODOs
+
+- [ ] find `file_put_contents` and `copy` (see unlinks around) and find sustainable solution of file / directory permissions
+    - note: if asset directory is writable for current user, she may delete (and recreate) contents but cannot write to existing contents
+    - if she creates file unreadable for others, it still may be a problem (it will be unreadable for apache)

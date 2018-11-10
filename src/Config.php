@@ -29,6 +29,9 @@ class Config {
         }
     }
 
+    /**
+     * @return array pairs like ['scss', ['some_glob', 'other/glob.*']]
+     */
     function getAllowedBuilds() {
         if (!isset($this->allowedBuilds)) {
             $builds = [];
