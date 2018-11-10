@@ -55,6 +55,13 @@ class AssetManager {
     }
 
     /**
+     * Enable / disable automatic file changes checking & build.
+     */
+    function setAutobuild($value) {
+        $this->autobuild = (bool) $value;
+    }
+
+    /**
      * Sets configuration file with list of allowed compilable files.
      *
      * This is to allow interactive development with automatic build and batch
