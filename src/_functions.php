@@ -44,7 +44,7 @@ function naive_realpath($path) {
 
     do {
         $path = preg_replace("#$regex#", '', $path, 1, $numChanges);
-    } while($numChanges > 0);
+    } while ($numChanges > 0);
 
     return $path;
 }
