@@ -20,9 +20,9 @@ class ScssAsset {
     function __construct($globSources, $targetDirectory) {
         // TODO target directory might be emptystring?
         $this->globSources = $globSources;
+        $this->dir = $targetDirectory;
 
-        $hash = nice_hash($globSources);
-        $this->dir    = $targetDirectory;
+        $hash = fs_relative_nice_hash($this->dir, $globSources);
         $this->target = "$targetDirectory/$hash.css";
         $this->meta   = new ScssMeta("$targetDirectory/$hash.json");
     }
@@ -118,7 +118,7 @@ class ScssAsset {
         $suffix     = substr($file, strrpos($file, '.'));
         $modified   = filemtime($file);
 
-        $targetName = nice_hash([$file]) . $suffix;
+        $targetName = fs_relative_nice_hash($this->dir, [$file]) . $suffix;
         $targetUrl  = $targetName . '?v=' . $modified;
         $targetFile = $this->dir . '/' . $targetName;
 
